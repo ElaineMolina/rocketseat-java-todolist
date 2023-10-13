@@ -1,13 +1,15 @@
 package com.molina.todolist.user;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.molina.todolist.task.TaskModel;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -15,6 +17,12 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @GetMapping("/")
+    public List<UserModel> list(HttpServletRequest request) {
+        var users = this.userRepository.findAll();
+        return users;
+    }
     @PostMapping("/")
     public ResponseEntity create(@RequestBody UserModel userModel){
         var user = this.userRepository.findByUserName(userModel.getUserName());
@@ -32,5 +40,7 @@ public class UserController {
         var userCreated = this.userRepository.save(userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
     }
+
+
 }
 
